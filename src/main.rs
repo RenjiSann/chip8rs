@@ -8,15 +8,11 @@ fn main() {
 
     let mut chip = Chip8::new();
     chip.load_default_font();
+    chip.load_file("programs/ibm_logo.ch8");
 
-    let mut display = renderer::AsciiDisplay::new();
-    display.render();
-
-    for i in 0..32 {
-        display.draw_sprite(i, i, 127);
-        display.render();
+    loop {
+        let inst = chip.fetch();
+        chip.execute(&inst);
         thread::sleep(time::Duration::from_millis(100));
     }
-    display.clear();
-    display.render();
 }
