@@ -1,4 +1,7 @@
+pub mod instruction;
 pub mod renderer;
+
+use instruction::ChipInst;
 use std::fs::File;
 use std::io;
 use std::io::Read;
@@ -6,18 +9,21 @@ use std::io::Read;
 /**
  * Retro-compatibility options
  */
+#[derive(Debug)]
 struct ChipCfg {
     font_start: u16,       // Starting address of the fonts bytes
-    bnnn_legacy: bool,     // If true, BNNN will jump to NNN + V0. Else, to NNN + Vx
+    off_jump_legacy: bool, // If true, BNNN will jump to NNN + V0. Else, to NNN + Vx
     reg_save_legacy: bool, // If true, FX55 and FX65 will alter the value of I
+    index_add_carry: bool, // If true, carry will be set when I overflows with FX1E
 }
 
 impl Default for ChipCfg {
     fn default() -> Self {
         ChipCfg {
             font_start: 0x050,
-            bnnn_legacy: false,
+            off_jump_legacy: false,
             reg_save_legacy: false,
+            index_add_carry: false,
         }
     }
 }
@@ -41,29 +47,30 @@ const DEFAULT_FONT: [u8; 80] = [
     0xF0, 0x80, 0xF0, 0x80, 0x80, // F
 ];
 
+#[derive(Debug)]
 pub struct Chip8 {
-    I: u16,  // 16-bit index register
-    PC: u16, // 16-bit program counter
-    DT: u8,  // 8-bit delay timer
-    ST: u8,  // 8-bit sound timer
-    SP: u8,  // 8-bit stack pointer
+    i: u16,  // 16-bit index register
+    pc: u16, // 16-bit program counter
+    dt: u8,  // 8-bit delay timer
+    st: u8,  // 8-bit sound timer
+    sp: u8,  // 8-bit stack pointer
 
     v: [u8; 16],          // 16 multi-purpose 8-bit registers
     stack: [u16; 32],     // 32 words deep call-stack
     mem: [u8; 4096usize], // 4 KiB RAM
 
     disp: renderer::AsciiDisplay, // The outpur display
-    config: ChipCfg,    // Chip configuration
+    config: ChipCfg,              // Chip configuration
 }
 
 impl Chip8 {
     pub fn new() -> Self {
         Chip8 {
-            I: 0,
-            PC: 0x200,
-            DT: 0,
-            ST: 0,
-            SP: 0,
+            i: 0,
+            pc: 0x200,
+            dt: 0,
+            st: 0,
+            sp: 0,
             v: [0; 16],
             stack: [0; 32],
             mem: [0; 4096],
@@ -101,5 +108,13 @@ impl Chip8 {
         for i in 0..DEFAULT_FONT.len() {
             self.mem[offset + i] = DEFAULT_FONT[i];
         }
+    }
+
+    pub fn fetch(&mut self) -> ChipInst {
+        let b1 = self.mem[self.pc as usize];
+        let b2 = self.mem[(self.pc + 1) as usize];
+        self.pc += 2;
+        let w: u16 = ((b1 as u16) << 8) | (b2 as u16);
+        ChipInst::new(w)
     }
 }
