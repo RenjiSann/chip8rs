@@ -60,7 +60,7 @@ pub struct Chip8 {
     stack: [u16; 32],     // 32 words deep call-stack
     mem: [u8; 4096usize], // 4 KiB RAM
 
-    disp: renderer::AsciiDisplay, // The outpur display
+    disp: renderer::ascii_display::AsciiDisplay, // The outpur display
     config: ChipCfg,              // Chip configuration
 }
 
@@ -75,7 +75,7 @@ impl Chip8 {
             v: [0; 16],
             stack: [0; 32],
             mem: [0; 4096],
-            disp: renderer::AsciiDisplay::new(),
+            disp: renderer::ascii_display::AsciiDisplay::new(),
             config: Default::default(),
         }
     }
