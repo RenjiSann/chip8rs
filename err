@@ -1,0 +1,84 @@
+warning: unused import: `max`
+ --> src/chip8/chip_debug.rs:2:16
+  |
+2 | use std::cmp::{max, min};
+  |                ^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused variable: `inst`
+   --> src/chip8/instruction.rs:306:29
+    |
+306 |     fn inst_FX0A(&mut self, inst: &ChipInst) {
+    |                             ^^^^ help: if this is intentional, prefix it with an underscore: `_inst`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `chip`
+  --> src/chip8/input.rs:23:18
+   |
+23 | pub fn isPressed(chip: &Chip8, value: u8) -> bool {
+   |                  ^^^^ help: if this is intentional, prefix it with an underscore: `_chip`
+
+warning: associated function is never used: `load_file`
+  --> src/chip8/mod.rs:86:12
+   |
+86 |     pub fn load_file(&mut self, path: &str) -> Result<(), io::Error> {
+   |            ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: associated function is never used: `load_font`
+   --> src/chip8/mod.rs:112:12
+    |
+112 |     pub fn load_font(&mut self, path: &str) -> Result<(), io::Error> {
+    |            ^^^^^^^^^
+
+warning: function `isPressed` should have a snake case name
+  --> src/chip8/input.rs:23:8
+   |
+23 | pub fn isPressed(chip: &Chip8, value: u8) -> bool {
+   |        ^^^^^^^^^ help: convert the identifier to snake case: `is_pressed`
+   |
+   = note: `#[warn(non_snake_case)]` on by default
+
+warning: variable `keyCode` should have a snake case name
+  --> src/chip8/input.rs:24:9
+   |
+24 |     let keyCode = DEFAULT_CODES[value as usize];
+   |         ^^^^^^^ help: convert the identifier to snake case: `key_code`
+
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre
+HEre

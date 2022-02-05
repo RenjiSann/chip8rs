@@ -1,5 +1,5 @@
 [package]
-name = "chip8"
+name = "chip8rs"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,3 +9,4 @@ overflow-checks = false # Necessary, as overflows may occur and are normal
 
 [dependencies]
 rand = "0.8.4"
+sdl2 = "0.35.1"

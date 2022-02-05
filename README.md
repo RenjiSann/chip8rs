@@ -2,7 +2,7 @@
 Author: Dorian 'Renji' Péron
 Date: 02-2022
 ---
-# rs-chip8
+# chip8rs
 
 ---
 
@@ -18,5 +18,6 @@ I also got inspiration from [this implementation](https://github.com/Clotildelev
 - [ ] Handling inputs
 - [ ] Handling timers
 - [ ] Handling sound
+- [ ] Debug info printing
 
-I also try to organize my code the best possible, to learn how the module and crates system works.
+I also try to organize my code as well as possible, to learn how the module and crates system works.

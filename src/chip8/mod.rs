@@ -1,5 +1,7 @@
 pub mod instruction;
 pub mod renderer;
+pub mod input;
+pub mod chip_debug;
 
 use instruction::ChipInst;
 use std::fs::File;
@@ -78,6 +80,9 @@ impl Chip8 {
         }
     }
 
+    /**
+     * Load a program from the bytes of a file
+     */
     pub fn load_file(&mut self, path: &str) -> Result<(), io::Error> {
         // Load the file
         let mut f: File = File::open(path)?;
@@ -87,6 +92,21 @@ impl Chip8 {
         let addr = 0x200;
         f.read(&mut self.mem[addr..])?;
         Ok(())
+    }
+
+    /**
+     * Load a program from a byte array
+     */
+    pub fn load_program(&mut self, arr: &[u8]) {
+        let startprgm: &mut[u8] = &mut self.mem[0x200..];
+        
+        if startprgm.len() < arr.len(){
+            panic!("Program is to large !");
+        }
+
+        for i in 0..arr.len() {
+            startprgm[i] = arr[i];
+        }
     }
 
     pub fn load_font(&mut self, path: &str) -> Result<(), io::Error> {

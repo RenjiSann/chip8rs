@@ -1,6 +1,8 @@
+use super::input;
 use super::Chip8;
 use rand::random;
 
+#[derive(Debug)]
 pub struct ChipInst {
     pub i: u8,     // bits 0-3
     pub x: u8,     // bits 4-7
@@ -35,7 +37,7 @@ impl Chip8 {
             0x0 => match inst.nnn {
                 0x0E0 => self.inst_00E0(inst),
                 0x0EE => self.inst_00EE(inst),
-                _ => panic!("Unknown command: {}", inst.full),
+                _ => panic!("Unknown command at {:#03x}: {:04x}", self.pc - 2, inst.full),
             },
             0x1 => self.inst_1NNN(inst),
             0x2 => self.inst_2NNN(inst),
@@ -54,7 +56,8 @@ impl Chip8 {
                 0x6 => self.inst_8XY6(inst),
                 0x7 => self.inst_8XY7(inst),
                 0xe => self.inst_8XYE(inst),
-                _ => panic!("Unknown command: {}", inst.full),
+                0xA1 => self.inst_EXA1(inst),
+                _ => panic!("Unknown command at {:#03x}: {:04x}", self.pc - 2, inst.full),
             },
             0x9 => self.inst_9XY0(inst),
             0xa => self.inst_ANNN(inst),
@@ -64,7 +67,7 @@ impl Chip8 {
             0xe => match inst.nn {
                 0x9E => self.inst_EX9E(inst),
                 0xA1 => self.inst_EXA1(inst),
-                _ => panic!("Unknown command: {}", inst.full),
+                _ => panic!("Unknown command at {:#03x}: {:04x}", self.pc - 2, inst.full),
             },
             0xf => match inst.nn {
                 0x07 => self.inst_FX07(inst),
@@ -76,9 +79,9 @@ impl Chip8 {
                 0x33 => self.inst_FX33(inst),
                 0x55 => self.inst_FX55(inst),
                 0x65 => self.inst_FX65(inst),
-                _ => panic!("Unknown command: {}", inst.full),
+                _ => panic!("Unknown command at {:#03x}: {:04x}", self.pc - 2, inst.full),
             },
-            _ => panic!("Illegal instruction {}", inst.i),
+            _ => panic!("Unknown command at {:#03x}: {:04x}", self.pc - 2, inst.full),
         }
     }
 
@@ -88,14 +91,14 @@ impl Chip8 {
      */
 
     #[allow(non_snake_case)]
-    fn inst_00E0(&mut self, inst: &ChipInst) {
+    fn inst_00E0(&mut self, _inst: &ChipInst) {
         // Just clear the screen
         self.disp.clear();
         self.disp.render();
     }
 
     #[allow(non_snake_case)]
-    fn inst_00EE(&mut self, inst: &ChipInst) {
+    fn inst_00EE(&mut self, _inst: &ChipInst) {
         // 'ret' instruction
         self.pc = self.stack[self.sp as usize];
         self.sp -= 1;
@@ -277,12 +280,20 @@ impl Chip8 {
     fn inst_EX9E(&mut self, inst: &ChipInst) {
         // Skip next instruction if the key Vx is pressed
         // TODO:
+        eprintln!("HEre");
+        if input::isPressed(self, self.v[inst.x as usize]) {
+            eprintln!("Pressed");
+            self.pc += 2;
+        }
     }
 
     #[allow(non_snake_case)]
     fn inst_EXA1(&mut self, inst: &ChipInst) {
         // Skip next instruction if the key Vx is not pressed
         // TODO:
+        if !input::isPressed(self, self.v[inst.x as usize]) {
+            self.pc += 2;
+        }
     }
 
     #[allow(non_snake_case)]
