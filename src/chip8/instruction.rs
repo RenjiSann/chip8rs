@@ -30,7 +30,7 @@ impl ChipInst {
  */
 impl Chip8 {
     pub fn execute(&mut self, inst: &ChipInst) {
-        // First, match the first half-byte
+        // Match the first half-byte
         match inst.i {
             0x0 => match inst.nnn {
                 0x0E0 => self.inst_00E0(inst),

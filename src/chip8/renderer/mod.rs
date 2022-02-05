@@ -1,6 +1,5 @@
 mod display {
 
-    #[derive(Default, Debug)]
     pub struct Display {
         pub tab: [u64; 32],
     }
@@ -38,7 +37,6 @@ mod display {
 const ZERO: char = '-';
 const ONE: char = '@';
 
-#[derive(Default, Debug)]
 pub struct AsciiDisplay {
     disp: display::Display,
 }

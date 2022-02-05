@@ -4,11 +4,14 @@ use chip8::Chip8;
 use std::{thread, time};
 
 fn main() {
-    println!("Hello, world!");
 
     let mut chip = Chip8::new();
     chip.load_default_font();
-    chip.load_file("programs/ibm_logo.ch8");
+    if let Err(e) = chip.load_file("programs/test_opcode.ch8")
+    {
+        println!("{}",e);
+        return;
+    }
 
     loop {
         let inst = chip.fetch();

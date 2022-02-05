@@ -47,7 +47,6 @@ const DEFAULT_FONT: [u8; 80] = [
     0xF0, 0x80, 0xF0, 0x80, 0x80, // F
 ];
 
-#[derive(Debug)]
 pub struct Chip8 {
     i: u16,  // 16-bit index register
     pc: u16, // 16-bit program counter
@@ -74,7 +73,7 @@ impl Chip8 {
             v: [0; 16],
             stack: [0; 32],
             mem: [0; 4096],
-            disp: Default::default(),
+            disp: renderer::AsciiDisplay::new(),
             config: Default::default(),
         }
     }
