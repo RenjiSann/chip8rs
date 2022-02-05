@@ -357,6 +357,12 @@ impl Chip8 {
         for k in 0..((inst.x as usize) + 1) {
             self.mem[i + k] = self.v[k];
         }
+
+        // If enabled, set the index to follow the
+        // legacy behavior
+        if self.config.reg_save_legacy {
+            self.i += (inst.x as u16) + 1;
+        }
     }
 
     #[allow(non_snake_case)]
@@ -366,6 +372,12 @@ impl Chip8 {
         let i: usize = self.i as usize;
         for k in 0..((inst.x as usize) + 1) {
             self.v[k] = self.mem[i + k];
+        }
+
+        // If enabled, set the index to follow the
+        // legacy behavior
+        if self.config.reg_save_legacy {
+            self.i += (inst.x as u16) + 1;
         }
     }
 }
