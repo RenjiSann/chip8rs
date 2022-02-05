@@ -14,9 +14,9 @@ I also got inspiration from [this implementation](https://github.com/Clotildelev
 
 ## TODO
 
-1. Implement a graphical interface instead of ascii drawing
-2. Handling inputs
-3. Handling timers
-4. Handling sound
+- [ ] Implement a graphical interface instead of ascii drawing
+- [ ] Handling inputs
+- [ ] Handling timers
+- [ ] Handling sound
 
 I also try to organize my code the best possible, to learn how the module and crates system works.
