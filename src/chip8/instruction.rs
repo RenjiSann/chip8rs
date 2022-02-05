@@ -198,7 +198,7 @@ impl Chip8 {
         // Set Vx to Vy, then shift Vx by 1 on the
         // right and set carry to the shifted out bit
         let y = self.v[inst.y as usize];
-        self.v[inst.x as usize] = (y & 0xFE) >> 1;
+        self.v[inst.x as usize] = y >> 1;
         self.v[0xF] = y & 0x01;
     }
 
@@ -217,7 +217,7 @@ impl Chip8 {
         // Set Vx to Vy, then shift Vx by 1 on the
         // left and set carry to the shifted out bit
         let y = self.v[inst.y as usize];
-        self.v[inst.x as usize] = (y & 0x7F) << 1;
+        self.v[inst.x as usize] = y << 1;
         self.v[0xF] = y & 0x80;
     }
 
