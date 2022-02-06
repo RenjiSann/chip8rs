@@ -25,6 +25,14 @@ impl Display {
         }
     }
 
+    /**
+     * Apply a byte to the screen.
+     * 
+     * The bit 0 of the given byte is applied on
+     * the pixel (x, y), the bit 1 on (x + 1, y), etc...
+     * 'Applying' the sprite only does a XOR between the 
+     * actual value and the byte value.
+     */
     pub fn draw_sprite(&mut self, x: u8, y: u8, byte: u8) {
         // Get the 'line' to update
         let mut val: u64 = self.tab[y as usize];
