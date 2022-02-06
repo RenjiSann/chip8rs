@@ -1,6 +1,7 @@
+use super::renderer;
 use super::Chip8;
-use sdl2::keyboard::Scancode;
 use sdl2::keyboard::Keycode;
+use sdl2::keyboard::Scancode;
 use std::collections::HashSet;
 
 const DEFAULT_CODES: [Scancode; 16] = [
@@ -22,6 +23,6 @@ const DEFAULT_CODES: [Scancode; 16] = [
     Scancode::F,
 ];
 
-pub fn isPressed(chip: &Chip8, value: u8) -> bool {
+pub fn isPressed<T: renderer::ChipRenderer>(chip: &Chip8<T>, value: u8) -> bool {
     false
 }

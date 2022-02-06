@@ -6,14 +6,13 @@ const ONE: char = '@';
 pub struct AsciiDisplay {
     disp: Display,
 }
-
-impl AsciiDisplay {
-    pub fn new() -> AsciiDisplay {
+impl super::ChipRenderer for AsciiDisplay {
+    fn new() -> AsciiDisplay {
         AsciiDisplay {
             disp: Display::new(),
         }
     }
-    pub fn render(&self) {
+    fn render(&self) {
         // Clear the terminal
         print!("\x1B[2J\x1B[1;1H");
 
@@ -32,10 +31,10 @@ impl AsciiDisplay {
             println!("{}", String::from_iter(chr_arr.iter()));
         }
     }
-    pub fn clear(&mut self) {
+    fn clear(&mut self) {
         self.disp.clear()
     }
-    pub fn draw_sprite(&mut self, x: u8, y: u8, byte: u8) {
+    fn draw_sprite(&mut self, x: u8, y: u8, byte: u8) {
         self.disp.draw_sprite(x, y, byte)
     }
 }

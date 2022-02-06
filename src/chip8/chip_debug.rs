@@ -1,8 +1,9 @@
+use super::renderer;
 use super::Chip8;
-use std::cmp::{max, min};
+use std::cmp::min;
 use std::fmt;
 
-impl fmt::Debug for Chip8 {
+impl<T: renderer::ChipRenderer> fmt::Debug for Chip8<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Build a string for showing a part of the memory
         // From index to index + 10

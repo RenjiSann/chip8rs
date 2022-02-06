@@ -1,7 +1,10 @@
+pub mod chip_debug;
+pub mod input;
 pub mod instruction;
 pub mod renderer;
-pub mod input;
-pub mod chip_debug;
+
+use renderer::AsciiDisplay;
+use renderer::ChipRenderer;
 
 use instruction::ChipInst;
 use std::fs::File;
@@ -49,7 +52,7 @@ const DEFAULT_FONT: [u8; 80] = [
     0xF0, 0x80, 0xF0, 0x80, 0x80, // F
 ];
 
-pub struct Chip8 {
+pub struct Chip8<T: renderer::ChipRenderer> {
     i: u16,  // 16-bit index register
     pc: u16, // 16-bit program counter
     dt: u8,  // 8-bit delay timer
@@ -60,13 +63,13 @@ pub struct Chip8 {
     stack: [u16; 32],     // 32 words deep call-stack
     mem: [u8; 4096usize], // 4 KiB RAM
 
-    disp: renderer::ascii_display::AsciiDisplay, // The outpur display
-    config: ChipCfg,              // Chip configuration
+    disp: T,         // The outpur display
+    config: ChipCfg, // Chip configuration
 }
 
-impl Chip8 {
-    pub fn new() -> Self {
-        Chip8 {
+impl Chip8<AsciiDisplay> {
+    pub fn newAscii() -> Self {
+        Chip8::<AsciiDisplay> {
             i: 0,
             pc: 0x200,
             dt: 0,
@@ -75,11 +78,13 @@ impl Chip8 {
             v: [0; 16],
             stack: [0; 32],
             mem: [0; 4096],
-            disp: renderer::ascii_display::AsciiDisplay::new(),
+            disp: renderer::AsciiDisplay::new(),
             config: Default::default(),
         }
     }
+}
 
+impl<T: ChipRenderer> Chip8<T> {
     /**
      * Load a program from the bytes of a file
      */
@@ -98,9 +103,9 @@ impl Chip8 {
      * Load a program from a byte array
      */
     pub fn load_program(&mut self, arr: &[u8]) {
-        let startprgm: &mut[u8] = &mut self.mem[0x200..];
-        
-        if startprgm.len() < arr.len(){
+        let startprgm: &mut [u8] = &mut self.mem[0x200..];
+
+        if startprgm.len() < arr.len() {
             panic!("Program is to large !");
         }
 

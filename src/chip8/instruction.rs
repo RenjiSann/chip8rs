@@ -1,5 +1,6 @@
 use super::input;
 use super::Chip8;
+use super::renderer;
 use rand::random;
 
 #[derive(Debug)]
@@ -30,7 +31,7 @@ impl ChipInst {
 /**
  * Define all instruction functions
  */
-impl Chip8 {
+impl <T: renderer::ChipRenderer> Chip8<T>{
     pub fn execute(&mut self, inst: &ChipInst) {
         // Match the first half-byte
         match inst.i {
