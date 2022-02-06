@@ -1,4 +1,5 @@
 use super::display::Display;
+use super::ChipRenderer;
 
 const ZERO: char = '-';
 const ONE: char = '@';
@@ -6,13 +7,18 @@ const ONE: char = '@';
 pub struct AsciiDisplay {
     disp: Display,
 }
-impl super::ChipRenderer for AsciiDisplay {
-    fn new() -> AsciiDisplay {
+
+impl AsciiDisplay{
+    pub fn new() -> AsciiDisplay {
         AsciiDisplay {
             disp: Display::new(),
         }
     }
-    fn render(&self) {
+}
+
+impl ChipRenderer for AsciiDisplay {
+
+    fn render(&mut self) {
         // Clear the terminal
         print!("\x1B[2J\x1B[1;1H");
 
@@ -31,9 +37,11 @@ impl super::ChipRenderer for AsciiDisplay {
             println!("{}", String::from_iter(chr_arr.iter()));
         }
     }
+
     fn clear(&mut self) {
         self.disp.clear()
     }
+
     fn draw_sprite(&mut self, x: u8, y: u8, byte: u8) {
         self.disp.draw_sprite(x, y, byte)
     }
