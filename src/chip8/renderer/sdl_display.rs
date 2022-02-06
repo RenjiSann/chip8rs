@@ -36,7 +36,7 @@ impl ChipRenderer for SDLDisplay {
 
         let (width, height) = size.unwrap();
         let pt_width = width / 64;
-        let pt_height = height / 64;
+        let pt_height = height / 32;
 
         let mut pixel;
         let mut rect: Rect;
