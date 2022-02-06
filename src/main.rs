@@ -1,17 +1,20 @@
 mod chip8;
 use chip8::Chip8;
+
 use sdl2;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use sdl2::{Sdl, VideoSubsystem};
-use std::time::Duration;
-use std::{thread, time};
+use sdl2::{AudioSubsystem, Sdl, VideoSubsystem};
 
-fn init_sdl() -> Result<(Sdl, VideoSubsystem), String> {
+use std::thread;
+use std::time::Duration;
+
+fn init_sdl() -> Result<(Sdl, VideoSubsystem, AudioSubsystem), String> {
     let sdl_ctxt = sdl2::init()?;
-    let video_subsystem = sdl_ctxt.video()?;
-    Ok((sdl_ctxt, video_subsystem))
+    let video_ssys = sdl_ctxt.video()?;
+    let audio_ssys = sdl_ctxt.audio()?;
+    Ok((sdl_ctxt, video_ssys, audio_ssys))
 }
 
 const OPS_PER_SEC: u64 = 700;
@@ -21,22 +24,18 @@ fn main() {
     if let Err(e) = &sdl_res {
         eprintln!("SDL loading error: {}", e);
     }
-    let (sdl_ctxt, video_subsys) = sdl_res.unwrap();
+    let (sdl_ctxt, video_subsys, audio_subsys) = sdl_res.unwrap();
 
     let window = video_subsys
-        .window("rust-sdl2 demo", 64, 32)
+        .window("rust-sdl2 demo", 800, 400)
         .position_centered()
         .build()
         .unwrap();
 
-    let mut canvas = window.into_canvas().build().unwrap();
-
-    canvas.set_draw_color(Color::RGB(0, 255, 255));
-    canvas.clear();
-    canvas.present();
     let mut event_pump = sdl_ctxt.event_pump().unwrap();
 
-    let mut chip = Chip8::newAscii();
+    let mut chip = Chip8::new_sdl(window).unwrap();
+    //let mut chip = Chip8::new_ascii();
     chip.load_default_font();
 
     if let Err(e) = chip.load_file("programs/ibm_logo.ch8") {
@@ -58,6 +57,7 @@ fn main() {
 
     // Main loop
     'running: loop {
+        // Check events
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
@@ -71,8 +71,8 @@ fn main() {
 
         let inst = chip.fetch();
         chip.execute(&inst);
-        thread::sleep(time::Duration::from_millis(100));
 
-        std::thread::sleep(Duration::from_millis(1000 / OPS_PER_SEC));
+        //thread::sleep(Duration::from_millis(1000 / OPS_PER_SEC));
+        thread::sleep(Duration::from_millis(1000));
     }
 }

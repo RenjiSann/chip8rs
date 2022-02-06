@@ -3,8 +3,8 @@ pub mod input;
 pub mod instruction;
 pub mod renderer;
 
-use renderer::AsciiDisplay;
 use renderer::ChipRenderer;
+use renderer::{AsciiDisplay, SDLDisplay};
 
 use instruction::ChipInst;
 use std::fs::File;
@@ -68,7 +68,7 @@ pub struct Chip8<T: renderer::ChipRenderer> {
 }
 
 impl Chip8<AsciiDisplay> {
-    pub fn newAscii() -> Self {
+    pub fn new_ascii() -> Self {
         Chip8::<AsciiDisplay> {
             i: 0,
             pc: 0x200,
@@ -81,6 +81,23 @@ impl Chip8<AsciiDisplay> {
             disp: renderer::AsciiDisplay::new(),
             config: Default::default(),
         }
+    }
+}
+
+impl Chip8<SDLDisplay> {
+    pub fn new_sdl(win: sdl2::video::Window) -> Result<Self, sdl2::IntegerOrSdlError> {
+        Ok(Chip8::<SDLDisplay> {
+            i: 0,
+            pc: 0x200,
+            dt: 0,
+            st: 0,
+            sp: 0,
+            v: [0; 16],
+            stack: [0; 32],
+            mem: [0; 4096],
+            disp: renderer::SDLDisplay::new(win)?,
+            config: Default::default(),
+        })
     }
 }
 

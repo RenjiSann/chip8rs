@@ -13,9 +13,16 @@ pub struct SDLDisplay {
 
 impl SDLDisplay {
     pub fn new(win: Window) -> Result<Self, sdl2::IntegerOrSdlError> {
+        let mut canvas = win.into_canvas().build()?;
+
+        // Set the background to black;
+        canvas.set_draw_color(Color::BLACK);
+        canvas.clear();
+        canvas.present();
+
         Ok(SDLDisplay {
             disp: Display::new(),
-            canvas: win.into_canvas().build()?,
+            canvas: canvas
         })
     }
 }
@@ -42,7 +49,7 @@ impl ChipRenderer for SDLDisplay {
         for row in 0..32 {
             for col in 0..64 {
                 // Pixel is true only if (row, col) is 1
-                pixel = row & (1 << (63 - col)) != 0;
+                pixel = self.disp.tab[row as usize] & (1 << (63 - col)) != 0;
 
                 // Only draw if white
                 if pixel {
