@@ -38,11 +38,12 @@ fn main() {
     //let mut chip = Chip8::new_ascii();
     chip.load_default_font();
 
+    /*
     if let Err(e) = chip.load_file("programs/ibm_logo.ch8") {
         println!("{}", e);
         return;
     }
-    /*
+    */
     // Program for testing Input handling
     let my_program = [
         0x60, 0x01, // set V0 to 1
@@ -50,16 +51,17 @@ fn main() {
         0x12, 0x00, // ask again
         0xF3, 0x29, // Put I to digit 3 sprite
         0xD0, 0x05, // Draw the letter in 0,0
+        0x12, 0x0a, // Loop again
     ];
 
     chip.load_program(&my_program);
-    */
 
     // Main loop
     'running: loop {
         // Check events
         
         for event in event_pump.poll_iter() {
+            dbg!(&event);
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
@@ -74,10 +76,10 @@ fn main() {
             break 'running;
         }
 
-        dbg!(event_pump.keyboard_state().is_scancode_pressed(Scancode::A));
+        //dbg!(event_pump.keyboard_state().is_scancode_pressed(Scancode::A));
 
         let inst = chip.fetch();
-        chip.execute(&inst);
+        chip.execute(&inst, &event_pump);
 
         thread::sleep(Duration::from_millis(1000 / OPS_PER_SEC));
         //thread::sleep(Duration::from_millis(1000));
