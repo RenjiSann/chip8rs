@@ -45,13 +45,21 @@ fn main() {
     }
     */
     // Program for testing Input handling
-    let my_program = [
+    let simple_input = [
         0x60, 0x01, // set V0 to 1
         0xE0, 0x9E, // jump instr if Vx == 1 is pressed
         0x12, 0x00, // ask again
         0xF3, 0x29, // Put I to digit 3 sprite
         0xD0, 0x05, // Draw the letter in 0,0
         0x12, 0x0a, // Loop again
+    ];
+
+    let my_program = [
+        0xF2, 0x0A, // Wait for an input and put it in A2
+        0x00, 0xE0, // Clear screen
+        0xF2, 0x29, // select the entered letter sprite
+        0xD0, 0x05, // Draw the letter in V0,V0
+        0x12, 0x00, // Loop 
     ];
 
     chip.load_program(&my_program);
@@ -79,7 +87,7 @@ fn main() {
         //dbg!(event_pump.keyboard_state().is_scancode_pressed(Scancode::A));
 
         let inst = chip.fetch();
-        chip.execute(&inst, &event_pump);
+        chip.execute(&inst, Some(&event_pump));
 
         thread::sleep(Duration::from_millis(1000 / OPS_PER_SEC));
         //thread::sleep(Duration::from_millis(1000));

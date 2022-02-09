@@ -33,7 +33,7 @@ impl ChipInst {
  * Define all instruction functions
  */
 impl Chip8 {
-    pub fn execute(&mut self, inst: &ChipInst, ev_pump: &EventPump) {
+    pub fn execute(&mut self, inst: &ChipInst, ev_pump: Option<&EventPump>) {
         // Match the first half-byte
         match inst.i {
             0x0 => match inst.nnn {
@@ -93,27 +93,27 @@ impl Chip8 {
      */
 
     #[allow(non_snake_case)]
-    fn inst_00E0(&mut self, _inst: &ChipInst, _ep: &EventPump) {
+    fn inst_00E0(&mut self, _inst: &ChipInst, _ep: Option<&EventPump>) {
         // Just clear the screen
         self.disp.clear();
         self.disp.render();
     }
 
     #[allow(non_snake_case)]
-    fn inst_00EE(&mut self, _inst: &ChipInst, _ep: &EventPump) {
+    fn inst_00EE(&mut self, _inst: &ChipInst, _ep: Option<&EventPump>) {
         // 'ret' instruction
         self.pc = self.stack[self.sp as usize];
         self.sp -= 1;
     }
 
     #[allow(non_snake_case)]
-    fn inst_1NNN(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_1NNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Simple jump
         self.pc = inst.nnn;
     }
 
     #[allow(non_snake_case)]
-    fn inst_2NNN(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_2NNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Function call
         self.sp += 1;
         self.stack[self.sp as usize] = self.pc;
@@ -121,7 +121,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_3XNN(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_3XNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Jump next instruction if Vx == NN
         if self.v[inst.x as usize] == inst.nn {
             self.pc += 2;
@@ -129,7 +129,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_4XNN(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_4XNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Jump next instruction if Vx != NN
         if self.v[inst.x as usize] != inst.nn {
             self.pc += 2;
@@ -137,7 +137,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_5XY0(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_5XY0(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Skip next instruction if Vx == Vy
         if self.v[inst.x as usize] == self.v[inst.y as usize] {
             self.pc += 2
@@ -145,43 +145,43 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_6XNN(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_6XNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to NN
         self.v[inst.x as usize] = inst.nn;
     }
 
     #[allow(non_snake_case)]
-    fn inst_7XNN(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_7XNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vx + NN with no carry set
         self.v[inst.x as usize] += inst.nn;
     }
 
     #[allow(non_snake_case)]
-    fn inst_8XY0(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_8XY0(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vy
         self.v[inst.x as usize] = self.v[inst.y as usize];
     }
 
     #[allow(non_snake_case)]
-    fn inst_8XY1(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_8XY1(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vx | Vy
         self.v[inst.x as usize] |= self.v[inst.y as usize];
     }
 
     #[allow(non_snake_case)]
-    fn inst_8XY2(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_8XY2(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vx & Vy
         self.v[inst.x as usize] &= self.v[inst.y as usize];
     }
 
     #[allow(non_snake_case)]
-    fn inst_8XY3(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_8XY3(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vx ^ Vy
         self.v[inst.x as usize] ^= self.v[inst.y as usize];
     }
 
     #[allow(non_snake_case)]
-    fn inst_8XY4(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_8XY4(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vx + Vy (with carry set)
         let x: u16 = self.v[inst.x as usize] as u16 + self.v[inst.y as usize] as u16;
         self.v[inst.x as usize] = x as u8;
@@ -189,7 +189,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_8XY5(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_8XY5(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vx - Vy and set carry to 0 if Vy > Vx
         let xx = self.v[inst.x as usize];
         let yy = self.v[inst.y as usize];
@@ -199,7 +199,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_8XY6(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_8XY6(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vy, then shift Vx by 1 on the
         // right and set carry to the shifted out bit
         let y = self.v[inst.y as usize];
@@ -208,7 +208,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_8XY7(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_8XY7(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vy - Vx and set carry to 0 if Vx > Vy
         let xx = self.v[inst.x as usize];
         let yy = self.v[inst.y as usize];
@@ -218,7 +218,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_8XYE(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_8XYE(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vy, then shift Vx by 1 on the
         // left and set carry to the shifted out bit
         let y = self.v[inst.y as usize];
@@ -227,7 +227,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_9XY0(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_9XY0(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Skip next instruction if Vx != Vy
         if self.v[inst.x as usize] != self.v[inst.y as usize] {
             self.pc += 2
@@ -235,13 +235,13 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_ANNN(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_ANNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set I to NNN
         self.i = inst.nnn;
     }
 
     #[allow(non_snake_case)]
-    fn inst_BNNN(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_BNNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Warning, legacy and modern implementation differ
         if self.config.off_jump_legacy {
             // Legacy: Set PC to V0 + NNN
@@ -253,13 +253,13 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_CXNN(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_CXNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to NN & random
         self.v[inst.x as usize] = random::<u8>() & inst.nn;
     }
 
     #[allow(non_snake_case)]
-    fn inst_DXYN(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_DXYN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Draw a sprite on the screen, starting at coordinates
         // (Vx % 64, Vy % 32), being N pixel tall and 8 pixels large,
         // taking sprites from mem[I]
@@ -279,52 +279,63 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_EX9E(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_EX9E(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Skip next instruction if the key Vx is pressed
-        // TODO:
-        if input::isPressed(_ep, self.v[inst.x as usize])
-        {
-            self.pc += 2
+        // Check if an event pump is provided
+        if let Some(ep) = _ep {
+            if input::isPressed(ep, self.v[inst.x as usize]) {
+                self.pc += 2
+            }
         }
     }
 
     #[allow(non_snake_case)]
-    fn inst_EXA1(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_EXA1(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Skip next instruction if the key Vx is not pressed
-        // TODO:
-        if !input::isPressed(_ep, self.v[inst.x as usize])
-        {
-            self.pc += 2
+        // Check if an event pump is provided
+        if let Some(ep) = _ep {
+            if !input::isPressed(ep, self.v[inst.x as usize]) {
+                self.pc += 2
+            }
         }
     }
 
     #[allow(non_snake_case)]
-    fn inst_FX07(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_FX07(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to DT
         self.v[inst.x as usize] = self.dt;
     }
 
     #[allow(non_snake_case)]
-    fn inst_FX0A(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_FX0A(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Get the pressed key and put it in Vx
-        // TODO:
-
+        // Check if an event pump is provided
+        if let Some(ep) = &_ep {
+            // Check if there is a key currently pressed
+            if let Some(u) = input::getScancode(ep) {
+                self.v[inst.x as usize] = u;
+            }
+            // If no key is pressed, wait for one to be pressed
+            else {
+                self.pc -= 2;
+            }
+        }
     }
 
     #[allow(non_snake_case)]
-    fn inst_FX15(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_FX15(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set DT to Vx
         self.dt = self.v[inst.x as usize];
     }
 
     #[allow(non_snake_case)]
-    fn inst_FX18(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_FX18(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set ST to Vx
         self.st = self.v[inst.x as usize];
     }
 
     #[allow(non_snake_case)]
-    fn inst_FX1E(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_FX1E(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Add Vx to I
         // if enabled, set carry bit to 1 if I goes
         // from 0x0FFF to 0x1000+
@@ -342,7 +353,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_FX29(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_FX29(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Put I at the address of the font character in Vx
         let vx = self.v[inst.x as usize];
 
@@ -352,7 +363,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_FX33(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_FX33(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Put the decimal digit values of Vx into
         // I, I + 1, and I + 2
         // Should never overflow as max value of Vx is 255
@@ -364,7 +375,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_FX55(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_FX55(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Store V0 up to Vx from I to I + x
         // (Vx is included)
         let i: usize = self.i as usize;
@@ -380,7 +391,7 @@ impl Chip8 {
     }
 
     #[allow(non_snake_case)]
-    fn inst_FX65(&mut self, inst: &ChipInst, _ep: &EventPump) {
+    fn inst_FX65(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Load memory I to I + x in V0 to Vx
         // (Vx is included)
         let i: usize = self.i as usize;
