@@ -4,7 +4,7 @@ use chip8::Chip8;
 use sdl2;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::pixels::Color;
+use sdl2::keyboard::Scancode;
 use sdl2::{AudioSubsystem, Sdl, VideoSubsystem};
 
 use std::thread;
@@ -58,6 +58,7 @@ fn main() {
     // Main loop
     'running: loop {
         // Check events
+        
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
@@ -68,11 +69,17 @@ fn main() {
                 _ => {}
             }
         }
+        
+        if chip.has_exited() {
+            break 'running;
+        }
+
+        dbg!(event_pump.keyboard_state().is_scancode_pressed(Scancode::A));
 
         let inst = chip.fetch();
         chip.execute(&inst);
 
-        //thread::sleep(Duration::from_millis(1000 / OPS_PER_SEC));
-        thread::sleep(Duration::from_millis(1000));
+        thread::sleep(Duration::from_millis(1000 / OPS_PER_SEC));
+        //thread::sleep(Duration::from_millis(1000));
     }
 }

@@ -23,6 +23,6 @@ const DEFAULT_CODES: [Scancode; 16] = [
     Scancode::F,
 ];
 
-pub fn isPressed<T: renderer::ChipRenderer>(chip: &Chip8<T>, value: u8) -> bool {
+pub fn isPressed(chip: &Chip8, value: u8) -> bool {
     false
 }

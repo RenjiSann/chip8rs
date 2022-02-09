@@ -1,6 +1,5 @@
 use super::input;
 use super::Chip8;
-use super::renderer;
 use rand::random;
 
 #[derive(Debug)]
@@ -31,7 +30,7 @@ impl ChipInst {
 /**
  * Define all instruction functions
  */
-impl <T: renderer::ChipRenderer> Chip8<T>{
+impl Chip8 {
     pub fn execute(&mut self, inst: &ChipInst) {
         // Match the first half-byte
         match inst.i {
@@ -282,19 +281,12 @@ impl <T: renderer::ChipRenderer> Chip8<T>{
         // Skip next instruction if the key Vx is pressed
         // TODO:
         eprintln!("HEre");
-        if input::isPressed(self, self.v[inst.x as usize]) {
-            eprintln!("Pressed");
-            self.pc += 2;
-        }
     }
 
     #[allow(non_snake_case)]
     fn inst_EXA1(&mut self, inst: &ChipInst) {
         // Skip next instruction if the key Vx is not pressed
         // TODO:
-        if !input::isPressed(self, self.v[inst.x as usize]) {
-            self.pc += 2;
-        }
     }
 
     #[allow(non_snake_case)]

@@ -11,6 +11,10 @@ use std::fs::File;
 use std::io;
 use std::io::Read;
 
+use sdl2::keyboard::KeyboardState;
+use sdl2::AudioSubsystem;
+use sdl2::EventPump;
+
 /**
  * Retro-compatibility options
  */
@@ -52,7 +56,7 @@ const DEFAULT_FONT: [u8; 80] = [
     0xF0, 0x80, 0xF0, 0x80, 0x80, // F
 ];
 
-pub struct Chip8<T: renderer::ChipRenderer> {
+pub struct Chip8 {
     i: u16,  // 16-bit index register
     pc: u16, // 16-bit program counter
     dt: u8,  // 8-bit delay timer
@@ -63,13 +67,17 @@ pub struct Chip8<T: renderer::ChipRenderer> {
     stack: [u16; 32],     // 32 words deep call-stack
     mem: [u8; 4096usize], // 4 KiB RAM
 
-    disp: T,         // The outpur display
+    disp: Box<dyn ChipRenderer>,   // The output display
+    audio: Option<AudioSubsystem>, // The audio output
+
     config: ChipCfg, // Chip configuration
+
+    exit: bool, // Boolean set to true if chip should be killed
 }
 
-impl Chip8<AsciiDisplay> {
+impl Chip8 {
     pub fn new_ascii() -> Self {
-        Chip8::<AsciiDisplay> {
+        Chip8 {
             i: 0,
             pc: 0x200,
             dt: 0,
@@ -78,15 +86,15 @@ impl Chip8<AsciiDisplay> {
             v: [0; 16],
             stack: [0; 32],
             mem: [0; 4096],
-            disp: renderer::AsciiDisplay::new(),
+            disp: Box::new(AsciiDisplay::new()),
+            audio: None,
             config: Default::default(),
+            exit: false,
         }
     }
-}
 
-impl Chip8<SDLDisplay> {
     pub fn new_sdl(win: sdl2::video::Window) -> Result<Self, sdl2::IntegerOrSdlError> {
-        Ok(Chip8::<SDLDisplay> {
+        Ok(Chip8 {
             i: 0,
             pc: 0x200,
             dt: 0,
@@ -95,13 +103,15 @@ impl Chip8<SDLDisplay> {
             v: [0; 16],
             stack: [0; 32],
             mem: [0; 4096],
-            disp: renderer::SDLDisplay::new(win)?,
+            disp: Box::new(renderer::SDLDisplay::new(win)?),
+            audio: None,
             config: Default::default(),
+            exit: false,
         })
     }
 }
 
-impl<T: ChipRenderer> Chip8<T> {
+impl Chip8 {
     /**
      * Load a program from the bytes of a file
      */
@@ -157,5 +167,9 @@ impl<T: ChipRenderer> Chip8<T> {
         self.pc += 2;
         let w: u16 = ((b1 as u16) << 8) | (b2 as u16);
         ChipInst::new(w)
+    }
+
+    pub fn has_exited(&self) -> bool {
+        self.exit
     }
 }
