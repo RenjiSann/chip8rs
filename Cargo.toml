@@ -5,7 +5,7 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [profile.dev]
-overflow-checks = false # Necessary, as overflows may occur and are normal
+# overflow-checks = false # Necessary, as overflows may occur and are normal
 
 [profile.release]
 lto = true
