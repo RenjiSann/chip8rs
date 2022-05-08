@@ -22,7 +22,7 @@ impl SDLDisplay {
 
         Ok(SDLDisplay {
             disp: Display::new(),
-            canvas: canvas
+            canvas: canvas,
         })
     }
 }

@@ -8,7 +8,7 @@ pub struct AsciiDisplay {
     disp: Display,
 }
 
-impl AsciiDisplay{
+impl AsciiDisplay {
     pub fn new() -> AsciiDisplay {
         AsciiDisplay {
             disp: Display::new(),
@@ -17,7 +17,6 @@ impl AsciiDisplay{
 }
 
 impl ChipRenderer for AsciiDisplay {
-
     fn render(&mut self) {
         // Clear the terminal
         print!("\x1B[2J\x1B[1;1H");

@@ -22,12 +22,12 @@ const DEFAULT_CODES: [Scancode; 16] = [
     Scancode::F,
 ];
 
-pub fn isPressed(ep: &EventPump, value: u8) -> bool {
-    ep.keyboard_state().is_scancode_pressed(DEFAULT_CODES[value as usize])
+pub fn is_pressed(ep: &EventPump, value: u8) -> bool {
+    ep.keyboard_state()
+        .is_scancode_pressed(DEFAULT_CODES[value as usize])
 }
 
-pub fn getScancode(ep: &EventPump) -> Option<u8> {
-
+pub fn get_scancode(ep: &EventPump) -> Option<u8> {
     for sc in ep.keyboard_state().pressed_scancodes() {
         if let Some(x) = DEFAULT_CODES.iter().position(|elm| elm == &sc) {
             return Some(x as u8);
