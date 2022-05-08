@@ -1,19 +1,20 @@
+pub mod buzzer;
 pub mod chip_debug;
 pub mod input;
 pub mod instruction;
 pub mod renderer;
 
-use renderer::ChipRenderer;
-use renderer::{AsciiDisplay, SDLDisplay};
+use buzzer::Buzzer;
+
+use renderer::{ChipRenderer, AsciiDisplay, SDLDisplay};
 
 use instruction::ChipInst;
 use std::fs::File;
 use std::io;
 use std::io::Read;
 
-use sdl2::keyboard::KeyboardState;
+use sdl2::video;
 use sdl2::AudioSubsystem;
-use sdl2::EventPump;
 
 /**
  * Retro-compatibility options
@@ -67,8 +68,8 @@ pub struct Chip8 {
     stack: [u16; 32],     // 32 words deep call-stack
     mem: [u8; 4096usize], // 4 KiB RAM
 
-    disp: Box<dyn ChipRenderer>,   // The output display
-    audio: Option<AudioSubsystem>, // The audio output
+    disp: Box<dyn ChipRenderer>, // The output display
+    audio: Option<Buzzer>,       // The audio output
 
     config: ChipCfg, // Chip configuration
 
@@ -76,6 +77,10 @@ pub struct Chip8 {
 }
 
 impl Chip8 {
+    /**
+     * @brief Create a Chip8 emulator without SDL, meaning without input and
+     * sound, and in a terminal window.
+     */
     pub fn new_ascii() -> Self {
         Chip8 {
             i: 0,
@@ -93,7 +98,16 @@ impl Chip8 {
         }
     }
 
-    pub fn new_sdl(win: sdl2::video::Window) -> Result<Self, sdl2::IntegerOrSdlError> {
+    /**
+     * @brief Create a Chip8 emulator with SDL.
+     */
+    pub fn new_sdl(
+        win: video::Window,
+        audio: &AudioSubsystem,
+    ) -> Result<Self, sdl2::IntegerOrSdlError> {
+        // Create the buzzer, linked to SDL's audio subsystem.
+        let buzzer = Buzzer::new(audio).unwrap();
+
         Ok(Chip8 {
             i: 0,
             pc: 0x200,
@@ -103,8 +117,8 @@ impl Chip8 {
             v: [0; 16],
             stack: [0; 32],
             mem: [0; 4096],
-            disp: Box::new(renderer::SDLDisplay::new(win)?),
-            audio: None,
+            disp: Box::new(SDLDisplay::new(win)?),
+            audio: Some(buzzer),
             config: Default::default(),
             exit: false,
         })
@@ -171,5 +185,25 @@ impl Chip8 {
 
     pub fn has_exited(&self) -> bool {
         self.exit
+    }
+
+    pub fn update_timers(&mut self) {
+        if self.dt > 0 {
+            self.dt -= 1;
+        }
+
+        if self.st > 0 {
+            self.st -= 1;
+        }
+    }
+
+    pub fn refresh_buzzer(&mut self) {
+        if let Some(buz) = &self.audio {
+            if self.st == 0 {
+                buz.stop()
+            } else {
+                buz.start()
+            }
+        }
     }
 }

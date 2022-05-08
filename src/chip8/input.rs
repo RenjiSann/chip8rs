@@ -1,5 +1,3 @@
-use super::renderer;
-use super::Chip8;
 use sdl2::keyboard::Scancode;
 use sdl2::EventPump;
 
