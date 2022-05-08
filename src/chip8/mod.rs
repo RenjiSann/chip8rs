@@ -6,7 +6,7 @@ pub mod renderer;
 
 use buzzer::Buzzer;
 
-use renderer::{ChipRenderer, AsciiDisplay, SDLDisplay};
+use renderer::{AsciiDisplay, ChipRenderer, SDLDisplay};
 
 use instruction::ChipInst;
 use std::fs::File;
@@ -38,6 +38,9 @@ impl Default for ChipCfg {
     }
 }
 
+/**
+ * Hexadecimal digits sprites to print on screen.
+ */
 const DEFAULT_FONT: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     0x20, 0x60, 0x20, 0x20, 0x70, // 1

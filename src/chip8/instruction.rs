@@ -153,7 +153,8 @@ impl Chip8 {
     #[allow(non_snake_case)]
     fn inst_7XNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vx + NN with no carry set
-        self.v[inst.x as usize] = self.v[inst.x as usize].wrapping_add(inst.nn);
+        let vx = &mut self.v[inst.x as usize];
+        *vx = (*vx).wrapping_add(inst.nn);
     }
 
     #[allow(non_snake_case)]
@@ -202,9 +203,9 @@ impl Chip8 {
     fn inst_8XY6(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vy, then shift Vx by 1 on the
         // right and set carry to the shifted out bit
-        let y = self.v[inst.y as usize];
-        self.v[inst.x as usize] = y >> 1;
-        self.v[0xF] = y & 0x01;
+        let y = &mut self.v[inst.y as usize];
+        *y >>= 1;
+        self.v[0xF] = *y & 0x01;
     }
 
     #[allow(non_snake_case)]
@@ -221,9 +222,9 @@ impl Chip8 {
     fn inst_8XYE(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vy, then shift Vx by 1 on the
         // left and set carry to the shifted out bit
-        let y = self.v[inst.y as usize];
-        self.v[inst.x as usize] = y << 1;
-        self.v[0xF] = y & 0x80;
+        let y = &mut self.v[inst.x as usize];
+        *y <<= 1;
+        self.v[0xF] = *y & 0x80;
     }
 
     #[allow(non_snake_case)]
