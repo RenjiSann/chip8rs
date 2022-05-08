@@ -153,7 +153,7 @@ impl Chip8 {
     #[allow(non_snake_case)]
     fn inst_7XNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Set Vx to Vx + NN with no carry set
-        self.v[inst.x as usize] += inst.nn;
+        self.v[inst.x as usize] = self.v[inst.x as usize].wrapping_add(inst.nn);
     }
 
     #[allow(non_snake_case)]
@@ -194,7 +194,7 @@ impl Chip8 {
         let xx = self.v[inst.x as usize];
         let yy = self.v[inst.y as usize];
         let carry = if yy > xx { 0 } else { 1 };
-        self.v[inst.x as usize] = xx - yy;
+        self.v[inst.x as usize] = xx.wrapping_sub(yy);
         self.v[0xF] = carry;
     }
 
@@ -213,7 +213,7 @@ impl Chip8 {
         let xx = self.v[inst.x as usize];
         let yy = self.v[inst.y as usize];
         let carry = if yy < xx { 0 } else { 1 };
-        self.v[inst.x as usize] = yy - xx;
+        self.v[inst.x as usize] = yy.wrapping_sub(xx);
         self.v[0xF] = carry;
     }
 
@@ -230,7 +230,7 @@ impl Chip8 {
     fn inst_9XY0(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
         // Skip next instruction if Vx != Vy
         if self.v[inst.x as usize] != self.v[inst.y as usize] {
-            self.pc += 2
+            self.pc = self.pc.wrapping_add(2);
         }
     }
 
@@ -245,10 +245,10 @@ impl Chip8 {
         // Warning, legacy and modern implementation differ
         if self.config.off_jump_legacy {
             // Legacy: Set PC to V0 + NNN
-            self.pc = (self.v[0x0] as u16) + inst.nnn;
+            self.pc = (self.v[0x0] as u16).wrapping_add(inst.nnn);
         } else {
             // Modern: Set PC to VX + XNN
-            self.pc = (self.v[inst.x as usize] as u16) + inst.nnn;
+            self.pc = (self.v[inst.x as usize] as u16).wrapping_add(inst.nnn);
         }
     }
 
@@ -271,7 +271,7 @@ impl Chip8 {
                 break;
             }
             self.disp
-                .draw_sprite(vx, vy + i, self.mem[(self.i + (i as u16)) as usize])
+                .draw_sprite(vx, vy.wrapping_add(i), self.mem[(self.i + (i as u16)) as usize])
         }
 
         // Update display
@@ -283,7 +283,7 @@ impl Chip8 {
         // Skip next instruction if the key Vx is pressed
         // Check if an event pump is provided
         if let Some(ep) = _ep {
-            if input::isPressed(ep, self.v[inst.x as usize]) {
+            if input::is_pressed(ep, self.v[inst.x as usize]) {
                 self.pc += 2
             }
         }
@@ -294,7 +294,7 @@ impl Chip8 {
         // Skip next instruction if the key Vx is not pressed
         // Check if an event pump is provided
         if let Some(ep) = _ep {
-            if !input::isPressed(ep, self.v[inst.x as usize]) {
+            if !input::is_pressed(ep, self.v[inst.x as usize]) {
                 self.pc += 2
             }
         }
@@ -312,12 +312,12 @@ impl Chip8 {
         // Check if an event pump is provided
         if let Some(ep) = &_ep {
             // Check if there is a key currently pressed
-            if let Some(u) = input::getScancode(ep) {
+            if let Some(u) = input::get_scancode(ep) {
                 self.v[inst.x as usize] = u;
             }
             // If no key is pressed, wait for one to be pressed
             else {
-                self.pc -= 2;
+                self.pc = self.pc.wrapping_sub(2);
             }
         }
     }
