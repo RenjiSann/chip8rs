@@ -39,7 +39,7 @@ impl Chip8 {
             0x0 => match inst.nnn {
                 0x0E0 => self.inst_00E0(inst, ev_pump),
                 0x0EE => self.inst_00EE(inst, ev_pump),
-                _ => panic!("Unknown command at {:#03x}: {:04x}", self.pc - 2, inst.full),
+                _ => panic!("Unknown instruction at {:#03x}: {:04x}", self.pc - 2, inst.full),
             },
             0x1 => self.inst_1NNN(inst, ev_pump),
             0x2 => self.inst_2NNN(inst, ev_pump),
@@ -59,7 +59,7 @@ impl Chip8 {
                 0x7 => self.inst_8XY7(inst, ev_pump),
                 0xe => self.inst_8XYE(inst, ev_pump),
                 0xA1 => self.inst_EXA1(inst, ev_pump),
-                _ => panic!("Unknown command at {:#03x}: {:04x}", self.pc - 2, inst.full),
+                _ => panic!("Unknown instruction at {:#03x}: {:04x}", self.pc - 2, inst.full),
             },
             0x9 => self.inst_9XY0(inst, ev_pump),
             0xa => self.inst_ANNN(inst, ev_pump),
@@ -69,7 +69,7 @@ impl Chip8 {
             0xe => match inst.nn {
                 0x9E => self.inst_EX9E(inst, ev_pump),
                 0xA1 => self.inst_EXA1(inst, ev_pump),
-                _ => panic!("Unknown command at {:#03x}: {:04x}", self.pc - 2, inst.full),
+                _ => panic!("Unknown instruction at {:#03x}: {:04x}", self.pc - 2, inst.full),
             },
             0xf => match inst.nn {
                 0x07 => self.inst_FX07(inst, ev_pump),
@@ -81,9 +81,9 @@ impl Chip8 {
                 0x33 => self.inst_FX33(inst, ev_pump),
                 0x55 => self.inst_FX55(inst, ev_pump),
                 0x65 => self.inst_FX65(inst, ev_pump),
-                _ => panic!("Unknown command at {:#03x}: {:04x}", self.pc - 2, inst.full),
+                _ => panic!("Unknown instruction at {:#03x}: {:04x}", self.pc - 2, inst.full),
             },
-            _ => panic!("Unknown command at {:#03x}: {:04x}", self.pc - 2, inst.full),
+            _ => panic!("Unknown instruction at {:#03x}: {:04x}", self.pc - 2, inst.full),
         }
     }
 
@@ -122,7 +122,7 @@ impl Chip8 {
 
     #[allow(non_snake_case)]
     fn inst_3XNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
-        // Jump next instruction if Vx == NN
+        // Skip next instruction if Vx == NN
         if self.v[inst.x as usize] == inst.nn {
             self.pc += 2;
         }
@@ -130,7 +130,7 @@ impl Chip8 {
 
     #[allow(non_snake_case)]
     fn inst_4XNN(&mut self, inst: &ChipInst, _ep: Option<&EventPump>) {
-        // Jump next instruction if Vx != NN
+        // Skip next instruction if Vx != NN
         if self.v[inst.x as usize] != inst.nn {
             self.pc += 2;
         }

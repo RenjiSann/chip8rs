@@ -16,9 +16,9 @@ Then I used SDL2 to create a graphical window.
 ## TODO
 
 - [x] Implement a graphical interface instead of ascii drawing
-- [ ] Handling inputs
-- [ ] Handling timers
-- [ ] Handling sound
+- [x] Handling inputs
+- [x] Handling timers
+- [x] Handling sound
 - [x] Debug info printing
 
 I also try to organize my code as well as possible, to learn how the module and crates system works.
