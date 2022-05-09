@@ -13,6 +13,8 @@ create a graphical interface from the beginning, I first made a structure
 responsible for writing the screen out in the terminal.
 Then I used SDL2 to create a graphical window.
 
+The first implementation without SDL is available on the branch `ascii-display`.
+
 ## TODO
 
 - [x] Implement a graphical interface instead of ascii drawing
