@@ -1,5 +1,4 @@
 use super::display::Display;
-use super::ChipRenderer;
 
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
@@ -25,10 +24,7 @@ impl SDLDisplay {
             canvas: canvas,
         })
     }
-}
-
-impl ChipRenderer for SDLDisplay {
-    fn render(&mut self) {
+    pub fn render(&mut self) {
         let size = self.canvas.output_size();
         if let Err(e) = &size {
             panic!("Panic on size: {}", e);
@@ -69,11 +65,11 @@ impl ChipRenderer for SDLDisplay {
         self.canvas.present();
     }
 
-    fn clear(&mut self) {
+    pub fn clear(&mut self) {
         self.disp.clear();
     }
 
-    fn draw_sprite(&mut self, x: u8, y: u8, byte: u8) {
+    pub fn draw_sprite(&mut self, x: u8, y: u8, byte: u8) {
         self.disp.draw_sprite(x, y, byte)
     }
 }

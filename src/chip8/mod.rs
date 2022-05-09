@@ -6,7 +6,7 @@ pub mod renderer;
 
 use buzzer::Buzzer;
 
-use renderer::{AsciiDisplay, ChipRenderer, SDLDisplay};
+use renderer::SDLDisplay;
 
 use instruction::ChipInst;
 use std::fs::File;
@@ -71,8 +71,8 @@ pub struct Chip8 {
     stack: [u16; 32],     // 32 words deep call-stack
     mem: [u8; 4096usize], // 4 KiB RAM
 
-    disp: Box<dyn ChipRenderer>, // The output display
-    audio: Option<Buzzer>,       // The audio output
+    disp: SDLDisplay, // The output display
+    audio: Buzzer,    // The audio output
 
     config: ChipCfg, // Chip configuration
 
@@ -80,27 +80,6 @@ pub struct Chip8 {
 }
 
 impl Chip8 {
-    /**
-     * @brief Create a Chip8 emulator without SDL, meaning without input and
-     * sound, and in a terminal window.
-     */
-    pub fn new_ascii() -> Self {
-        Chip8 {
-            i: 0,
-            pc: 0x200,
-            dt: 0,
-            st: 0,
-            sp: 0,
-            v: [0; 16],
-            stack: [0; 32],
-            mem: [0; 4096],
-            disp: Box::new(AsciiDisplay::new()),
-            audio: None,
-            config: Default::default(),
-            exit: false,
-        }
-    }
-
     /**
      * @brief Create a Chip8 emulator with SDL.
      */
@@ -120,8 +99,8 @@ impl Chip8 {
             v: [0; 16],
             stack: [0; 32],
             mem: [0; 4096],
-            disp: Box::new(SDLDisplay::new(win)?),
-            audio: Some(buzzer),
+            disp: SDLDisplay::new(win)?,
+            audio: buzzer,
             config: Default::default(),
             exit: false,
         })
@@ -201,12 +180,10 @@ impl Chip8 {
     }
 
     pub fn refresh_buzzer(&mut self) {
-        if let Some(buz) = &self.audio {
-            if self.st == 0 {
-                buz.stop()
-            } else {
-                buz.start()
-            }
+        if self.st == 0 {
+            self.audio.stop()
+        } else {
+            self.audio.start()
         }
     }
 }
