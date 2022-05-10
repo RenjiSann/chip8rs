@@ -26,21 +26,21 @@ fn main() {
     // Check arguments to get the program to load.
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 2 {
-        eprintln!("Not enough arguments !");
-        panic!();
+        eprintln!("Usage: {} <program-path>", args[0]);
+        std::process::exit(1);
     }
 
     // Initialize SDL.
     let sdl_res = init_sdl();
     if let Err(e) = &sdl_res {
         eprintln!("SDL loading error: {}", e);
-        panic!();
+        std::process::exit(2);
     }
     let (video_subsys, audio_subsys, mut event_pump) = sdl_res.unwrap();
 
     // Create a window for SDL.
     let window = video_subsys
-        .window("rust-sdl2 demo", 800, 400)
+        .window("Chip8rs", 800, 400)
         .position_centered()
         .build()
         .unwrap();
@@ -52,7 +52,7 @@ fn main() {
     // Load the program given in arguments.
     if let Err(e) = chip.load_file(&args[1]) {
         eprintln!("{}", e);
-        panic!();
+        std::process::exit(3);
     }
 
     // Timer

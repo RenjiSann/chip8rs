@@ -42,7 +42,7 @@ impl Chip8 {
         // Start writing at address 0x200 (512)
         // Because 0x0 - 0x1FF is kept for internal use
         let addr = 0x200;
-        f.read(&mut self.mem[addr..])?;
+        f.read_exact(&mut self.mem[addr..])?;
         Ok(())
     }
 
@@ -56,9 +56,7 @@ impl Chip8 {
             panic!("Program is to large !");
         }
 
-        for i in 0..arr.len() {
-            startprgm[i] = arr[i];
-        }
+        startprgm.clone_from_slice(arr);
     }
 
     pub fn load_font(&mut self, path: &str) -> Result<(), io::Error> {
@@ -69,15 +67,15 @@ impl Chip8 {
         // Then write 80 (5 * 16) bytes
         let font_beg = self.config.font_start as usize;
         let font_end = font_beg + (5 * 16) as usize;
-        f.read(&mut self.mem[font_beg..font_end])?;
+        f.read_exact(&mut self.mem[font_beg..font_end])?;
         Ok(())
     }
 
     pub fn load_default_font(&mut self) {
         // Load the hardcoded font
         let offset = self.config.font_start as usize;
-        for i in 0..DEFAULT_FONT.len() {
-            self.mem[offset + i] = DEFAULT_FONT[i];
+        for (i, item) in DEFAULT_FONT.iter().enumerate() {
+            self.mem[offset + i] = *item;
         }
     }
 

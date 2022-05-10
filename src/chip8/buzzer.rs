@@ -1,6 +1,8 @@
 use sdl2::audio::{AudioCallback, AudioDevice, AudioSpecDesired};
 use sdl2::AudioSubsystem;
 
+const BUZZER_VOLUME: f32 = 0.02;
+
 /**
  * Structure for generating the sound.
  */
@@ -49,7 +51,7 @@ impl Buzzer {
                 SquareWave {
                     phase_inc: 440.0 / spec.freq as f32,
                     phase: 0.5,
-                    volume: 0.05
+                    volume: BUZZER_VOLUME,
                 })?,
         })
     }

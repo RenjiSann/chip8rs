@@ -1,14 +1,13 @@
 pub mod buzzer;
+pub mod chip8;
 pub mod chip_debug;
 pub mod input;
 pub mod instruction;
 pub mod renderer;
-pub mod chip8;
 
 use buzzer::Buzzer;
 use instruction::ChipInst;
 use renderer::SDLDisplay;
-
 
 /**
  * Retro-compatibility options

@@ -45,7 +45,7 @@ impl Display {
         };
 
         // Apply the mask
-        val = val ^ mask;
+        val ^= mask;
 
         // Update the array
         self.tab[y as usize] = val;

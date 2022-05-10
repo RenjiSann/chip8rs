@@ -21,7 +21,7 @@ impl SDLDisplay {
 
         Ok(SDLDisplay {
             disp: Display::new(),
-            canvas: canvas,
+            canvas,
         })
     }
     pub fn render(&mut self) {

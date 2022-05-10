@@ -39,7 +39,11 @@ impl Chip8 {
             0x0 => match inst.nnn {
                 0x0E0 => self.inst_00E0(inst, ev_pump),
                 0x0EE => self.inst_00EE(inst, ev_pump),
-                _ => panic!("Unknown instruction at {:#03x}: {:04x}", self.pc - 2, inst.full),
+                _ => panic!(
+                    "Unknown instruction at {:#03x}: {:04x}",
+                    self.pc - 2,
+                    inst.full
+                ),
             },
             0x1 => self.inst_1NNN(inst, ev_pump),
             0x2 => self.inst_2NNN(inst, ev_pump),
@@ -59,7 +63,11 @@ impl Chip8 {
                 0x7 => self.inst_8XY7(inst, ev_pump),
                 0xe => self.inst_8XYE(inst, ev_pump),
                 0xA1 => self.inst_EXA1(inst, ev_pump),
-                _ => panic!("Unknown instruction at {:#03x}: {:04x}", self.pc - 2, inst.full),
+                _ => panic!(
+                    "Unknown instruction at {:#03x}: {:04x}",
+                    self.pc - 2,
+                    inst.full
+                ),
             },
             0x9 => self.inst_9XY0(inst, ev_pump),
             0xa => self.inst_ANNN(inst, ev_pump),
@@ -69,7 +77,11 @@ impl Chip8 {
             0xe => match inst.nn {
                 0x9E => self.inst_EX9E(inst, ev_pump),
                 0xA1 => self.inst_EXA1(inst, ev_pump),
-                _ => panic!("Unknown instruction at {:#03x}: {:04x}", self.pc - 2, inst.full),
+                _ => panic!(
+                    "Unknown instruction at {:#03x}: {:04x}",
+                    self.pc - 2,
+                    inst.full
+                ),
             },
             0xf => match inst.nn {
                 0x07 => self.inst_FX07(inst, ev_pump),
@@ -81,9 +93,17 @@ impl Chip8 {
                 0x33 => self.inst_FX33(inst, ev_pump),
                 0x55 => self.inst_FX55(inst, ev_pump),
                 0x65 => self.inst_FX65(inst, ev_pump),
-                _ => panic!("Unknown instruction at {:#03x}: {:04x}", self.pc - 2, inst.full),
+                _ => panic!(
+                    "Unknown instruction at {:#03x}: {:04x}",
+                    self.pc - 2,
+                    inst.full
+                ),
             },
-            _ => panic!("Unknown instruction at {:#03x}: {:04x}", self.pc - 2, inst.full),
+            _ => panic!(
+                "Unknown instruction at {:#03x}: {:04x}",
+                self.pc - 2,
+                inst.full
+            ),
         }
     }
 
@@ -271,8 +291,11 @@ impl Chip8 {
             if vy + i >= 32 {
                 break;
             }
-            self.disp
-                .draw_sprite(vx, vy.wrapping_add(i), self.mem[(self.i + (i as u16)) as usize])
+            self.disp.draw_sprite(
+                vx,
+                vy.wrapping_add(i),
+                self.mem[(self.i + (i as u16)) as usize],
+            )
         }
 
         // Update display
