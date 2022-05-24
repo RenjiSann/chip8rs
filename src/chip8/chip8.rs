@@ -6,6 +6,8 @@ use std::io::Read;
 use sdl2::video;
 use sdl2::AudioSubsystem;
 
+#[allow(clippy::unused_io_amount)]
+
 impl Chip8 {
     /**
      * @brief Create a Chip8 emulator with SDL.
@@ -42,7 +44,7 @@ impl Chip8 {
         // Start writing at address 0x200 (512)
         // Because 0x0 - 0x1FF is kept for internal use
         let addr = 0x200;
-        f.read_exact(&mut self.mem[addr..])?;
+        f.read(&mut self.mem[addr..])?;
         Ok(())
     }
 
